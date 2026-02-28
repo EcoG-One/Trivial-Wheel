@@ -42,4 +42,6 @@ Responsive layout - stacks vertically on mobile
 
 Beautiful gradient background with glassmorphism UI
 
-Try spinning the wheel and see how the game flows!
+Wanna try spinning the wheel and see how the game flows? Just point your WEB browser to:
+
+> https://ecog-one.github.io/Trivial-Wheel/
