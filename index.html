@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Trivia Wheel Game</title>
     <script src="https://cdn.tailwindcss.com/3.4.17"></script>
-   <!-- <script src="/_sdk/element_sdk.js"></script> -->
+    <script src="/_sdk/element_sdk.js"></script>
     <link
         href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&amp;family=Nunito:wght@400;600;700&amp;display=swap"
         rel="stylesheet">
@@ -132,22 +132,25 @@
             box-sizing: border-box;
         }
     </style>
-    <!-- <script src="/_sdk/data_sdk.js" type="text/javascript"></script> -->
+    <script src="/_sdk/data_sdk.js" type="text/javascript"></script>
 </head>
 
 <body class="h-full bg-gradient-to-br from-indigo-900 via-purple-900 to-pink-900 overflow-auto">
-    <div id="app" class="h-full w-full flex flex-col"><!-- Player Setup Screen -->
+    <div id="app" class="h-full w-full flex flex-col">
+        <!-- Player Setup Screen -->
         <div id="setup-screen" class="flex-1 flex items-center justify-center p-4">
             <div class="bg-white/10 backdrop-blur-lg rounded-3xl p-8 max-w-md w-full shadow-2xl border border-white/20">
                 <h1 id="main-title" class="title-font text-4xl font-bold text-center text-white mb-2">Trivia Wheel</h1>
                 <p class="text-white/70 text-center mb-6">Enter player names to begin!</p>
                 <div id="player-inputs" class="space-y-3 mb-6">
-                    <div class="flex gap-2"><input type="text"
+                    <div class="flex gap-2">
+                        <input type="text"
                             class="player-name-input flex-1 px-4 py-3 rounded-xl bg-white/20 border border-white/30 text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-pink-400"
                             placeholder="Player 1 name" maxlength="15"> <button onclick="removePlayerInput(this)"
                             class="px-3 py-2 rounded-xl bg-red-500/50 text-white hover:bg-red-500/70 transition hidden">✕</button>
                     </div>
-                    <div class="flex gap-2"><input type="text"
+                    <div class="flex gap-2">
+                        <input type="text"
                             class="player-name-input flex-1 px-4 py-3 rounded-xl bg-white/20 border border-white/30 text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-pink-400"
                             placeholder="Player 2 name" maxlength="15"> <button onclick="removePlayerInput(this)"
                             class="px-3 py-2 rounded-xl bg-red-500/50 text-white hover:bg-red-500/70 transition hidden">✕</button>
@@ -159,7 +162,8 @@
                     Start Game </button>
             </div>
         </div><!-- Game Screen -->
-        <div id="game-screen" class="hidden flex-1 flex flex-col p-4"><!-- Header with scores -->
+        <div id="game-screen" class="hidden flex-1 flex flex-col p-4">
+            <!-- Header with scores -->
             <div class="bg-white/10 backdrop-blur-lg rounded-2xl p-4 mb-4 border border-white/20">
                 <div class="flex flex-wrap items-center justify-between gap-4">
                     <h2 id="game-title-display" class="title-font text-2xl font-bold text-white">Trivia Wheel</h2>
@@ -168,9 +172,11 @@
                 </div>
                 <div id="scoreboard" class="mt-4 flex flex-wrap gap-3"></div>
             </div><!-- Main game area -->
-            <div class="flex-1 flex flex-col lg:flex-row gap-4 items-center justify-center"><!-- Wheel Section -->
+            <div class="flex-1 flex flex-col lg:flex-row gap-4 items-center justify-center">
+                <!-- Wheel Section -->
                 <div class="flex flex-col items-center">
-                    <div class="wheel-container relative"><!-- Fixed Pointer -->
+                    <div class="wheel-container relative">
+                        <!-- Fixed Pointer -->
                         <div class="absolute top-0 left-1/2 transform -translate-x-1/2 -translate-y-2 z-20">
                             <svg width="40" height="50" viewbox="0 0 40 50">
                                 <polygon points="20,50 5,10 20,0 35,10" fill="#ef4444" stroke="#991b1b"
@@ -488,6 +494,8 @@
             const wheel = document.getElementById('wheel');
             wheel.classList.remove('wheel-idle');
 
+            playWheelSpinSound();
+
             // Calculate spin
             const spins = 5 + Math.random() * 3;
             const extraDegrees = Math.random() * 360;
@@ -608,6 +616,7 @@
 
                 updateScoreboard();
             } else {
+                playWrongAnswerSound();
                 feedbackText.textContent = '❌ Wrong answer!';
                 feedbackContainer.className = 'mt-6 p-4 rounded-xl text-center bg-red-500/30';
             }
@@ -744,8 +753,74 @@
             }
         }
 
+        // Sound effects
+        const soundContext = new (window.AudioContext || window.webkitAudioContext)();
+
+        function playWheelSpinSound() {
+            // Whoosh sound effect for spinning
+            const now = soundContext.currentTime;
+            const osc = soundContext.createOscillator();
+            const gainNode = soundContext.createGain();
+
+            osc.connect(gainNode);
+            gainNode.connect(soundContext.destination);
+
+            osc.type = 'sine';
+            osc.frequency.setValueAtTime(200, now);
+            osc.frequency.exponentialRampToValueAtTime(100, now + 1.6);
+
+            gainNode.gain.setValueAtTime(0.3, now);
+            gainNode.gain.exponentialRampToValueAtTime(0.01, now + 1.6);
+
+            osc.start(now);
+            osc.stop(now + 1.6);
+        }
+
+        function playConfettiSound() {
+            // Pop/cheer sound effect
+            const now = soundContext.currentTime;
+            const osc = soundContext.createOscillator();
+            const gainNode = soundContext.createGain();
+
+            osc.connect(gainNode);
+            gainNode.connect(soundContext.destination);
+
+            osc.type = 'sine';
+            osc.frequency.setValueAtTime(800, now);
+            osc.frequency.exponentialRampToValueAtTime(400, now + 0.1);
+
+            gainNode.gain.setValueAtTime(0.2, now);
+            gainNode.gain.exponentialRampToValueAtTime(0.01, now + 0.1);
+
+            osc.start(now);
+            osc.stop(now + 0.1);
+        }
+
+        function playWrongAnswerSound() {
+            // Buzzer sound for wrong answer
+            const now = soundContext.currentTime;
+            const osc = soundContext.createOscillator();
+            const gainNode = soundContext.createGain();
+
+            osc.connect(gainNode);
+            gainNode.connect(soundContext.destination);
+
+            osc.type = 'triangle';
+            osc.frequency.setValueAtTime(150, now);
+            osc.frequency.setValueAtTime(100, now + 0.15);
+
+            gainNode.gain.setValueAtTime(0.3, now);
+            gainNode.gain.setValueAtTime(0.2, now + 0.15);
+            gainNode.gain.exponentialRampToValueAtTime(0.01, now + 0.3);
+
+            osc.start(now);
+            osc.stop(now + 0.3);
+        }
+
         // Create confetti
         function createConfetti() {
+            playConfettiSound();
+
             const container = document.getElementById('confetti-container');
             const colors = ['#3b82f6', '#ec4899', '#eab308', '#8b5cf6', '#22c55e', '#f97316', '#ef4444', '#ffffff'];
 
@@ -835,7 +910,7 @@
             });
         }
     </script>
-    <script>(function () { function c() { var b = a.contentDocument || a.contentWindow.document; if (b) { var d = b.createElement('script'); d.innerHTML = "window.__CF$cv$params={r:'9d511ba886c291d8',t:'MTc3MjI5NDE0NS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);"; b.getElementsByTagName('head')[0].appendChild(d) } } if (document.body) { var a = document.createElement('iframe'); a.height = 1; a.width = 1; a.style.position = 'absolute'; a.style.top = 0; a.style.left = 0; a.style.border = 'none'; a.style.visibility = 'hidden'; document.body.appendChild(a); if ('loading' !== document.readyState) c(); else if (window.addEventListener) document.addEventListener('DOMContentLoaded', c); else { var e = document.onreadystatechange || function () { }; document.onreadystatechange = function (b) { e(b); 'loading' !== document.readyState && (document.onreadystatechange = e, c()) } } } })();</script>
+    <script>(function () { function c() { var b = a.contentDocument || a.contentWindow.document; if (b) { var d = b.createElement('script'); d.innerHTML = "window.__CF$cv$params={r:'9d518b4993b14dc4',t:'MTc3MjI5ODcxNy4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);"; b.getElementsByTagName('head')[0].appendChild(d) } } if (document.body) { var a = document.createElement('iframe'); a.height = 1; a.width = 1; a.style.position = 'absolute'; a.style.top = 0; a.style.left = 0; a.style.border = 'none'; a.style.visibility = 'hidden'; document.body.appendChild(a); if ('loading' !== document.readyState) c(); else if (window.addEventListener) document.addEventListener('DOMContentLoaded', c); else { var e = document.onreadystatechange || function () { }; document.onreadystatechange = function (b) { e(b); 'loading' !== document.readyState && (document.onreadystatechange = e, c()) } } } })();</script>
 </body>
 
 </html>
