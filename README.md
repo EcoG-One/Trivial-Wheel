@@ -7,7 +7,7 @@
 
 * 6 colored wheel slices matching 6 trivia categories (Geography/blue, Entertainment/pink, History/yellow, Art & Literature/purple, Science & Nature/green, Sports & Leisure/orange)
 * Fixed red pointer at the 12 o'clock position that stays stationary while the wheel spins
-* 10 multiple-choice questions per category (60 total questions - feel free to add more :))
+* 110 multiple-choice questions per category (660 total questions - feel free to add more :))
 * Multiplayer support - add 2-6 players with customizable names
   
 ## Scoring System:
