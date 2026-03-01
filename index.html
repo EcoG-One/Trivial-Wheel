@@ -283,7 +283,7 @@
             { name: 'Sports & Leisure', color: '#f97316', startAngle: 300 }
         ];
 
-        // Questions bank - 10 questions per category
+        // Questions bank 
         const allQuestions = {
             'Geography': [
                 { q: "What is the capital of Australia?", options: ["Sydney", "Melbourne", "Canberra", "Perth"], correct: 2 },
@@ -856,6 +856,7 @@
             wheel.classList.remove('wheel-spinning');
             wheel.classList.add('wheel-idle');
 
+            document.getElementById('spin-btn').disabled = false;
             document.getElementById('winner-screen').classList.add('hidden');
             document.getElementById('game-screen').classList.add('hidden');
             document.getElementById('setup-screen').classList.remove('hidden');
